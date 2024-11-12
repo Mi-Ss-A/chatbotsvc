@@ -1,29 +1,27 @@
 package com.wibeechat.missa.service;
 
-
 import com.wibeechat.missa.dto.ChatSaveRequest;
 import com.wibeechat.missa.dto.ChatSaveResponse;
+import com.wibeechat.missa.dto.MessageDto;
 import com.wibeechat.missa.entity.ChatMessage;
 import com.wibeechat.missa.repostitory.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
-@Slf4j
-@Service
+// Consumer Service 수정
 @RequiredArgsConstructor
-public class ChatService {
-
+@Service
+@Slf4j
+public class KafkaConsumerService {
     private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
+    @KafkaListener(topics = "your-topic-name", groupId = "my-group")
     public ChatSaveResponse saveMessage(String userNo, ChatSaveRequest request) {
         ChatMessage message = ChatMessage.builder()
                 .userNo(userNo)
