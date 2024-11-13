@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-// Consumer Service 수정
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -21,25 +20,29 @@ public class KafkaConsumerService {
     private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
-    @KafkaListener(topics = "your-topic-name", groupId = "my-group")
     public ChatSaveResponse saveMessage(String userNo, ChatSaveRequest request) {
-        ChatMessage message = ChatMessage.builder()
-                .userNo(userNo)
-                .message(ChatMessage.Message.builder()
-                        .sender(ChatMessage.SenderType.valueOf(request.getSender()))
-                        .content(request.getContent())
-                        .timestamp(LocalDateTime.now())
-                        .build())
-                .metadata(ChatMessage.MessageMetadata.builder()
-                        .messageLength(request.getContent().length())
-                        .build())
-                .status(ChatMessage.MessageStatus.builder()
-                        .isProcessed(ChatMessage.SenderType.valueOf(request.getSender()) == ChatMessage.SenderType.AI)
-                        .build())
-                .build();
+        try {
+            ChatMessage message = ChatMessage.builder()
+                    .userNo(userNo)
+                    .message(ChatMessage.Message.builder()
+                            .sender(ChatMessage.SenderType.valueOf(request.getSender()))
+                            .content(request.getContent())
+                            .timestamp(LocalDateTime.now())
+                            .build())
+                    .metadata(ChatMessage.MessageMetadata.builder()
+                            .messageLength(request.getContent().length())
+                            .build())
+                    .status(ChatMessage.MessageStatus.builder()
+                            .isProcessed(ChatMessage.SenderType.valueOf(request.getSender()) == ChatMessage.SenderType.AI)
+                            .build())
+                    .build();
 
-        ChatMessage savedMessage = chatMessageRepository.save(message);
-
-        return ChatSaveResponse.from(savedMessage);
+            ChatMessage savedMessage = chatMessageRepository.save(message);
+            log.info("Message saved successfully for userNo: {}", userNo);
+            return ChatSaveResponse.from(savedMessage);
+        } catch (Exception e) {
+            log.error("Error saving message for userNo {}: {}", userNo, e.getMessage(), e);
+            throw e;
+        }
     }
 }
