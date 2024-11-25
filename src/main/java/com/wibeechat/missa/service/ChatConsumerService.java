@@ -1,16 +1,16 @@
 package com.wibeechat.missa.service;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wibeechat.missa.dto.ChatSaveRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wibeechat.missa.dto.ChatSaveRequest;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
@@ -19,7 +19,7 @@ import java.util.Map;
 public class ChatConsumerService {
     private final KafkaConsumerService chatService;
     private final ObjectMapper objectMapper; // Jackson ObjectMapper 주입
-    @KafkaListener(topics = "chat-topic", groupId = "chat-group")
+    @KafkaListener(topics = "chat-topic")
     public void consumeMessage(String message) {
         try {
             log.info("Received raw message: {}", message);

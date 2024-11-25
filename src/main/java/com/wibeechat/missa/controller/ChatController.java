@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/chat")
+@RequestMapping("/api/chatbot/chat")
 public class ChatController {
     private final KafkaTemplate<String, ChatSaveRequest> kafkaTemplate;
 
