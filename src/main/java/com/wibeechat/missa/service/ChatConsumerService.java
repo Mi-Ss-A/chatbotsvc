@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatConsumerService {
     private final KafkaConsumerService chatService;
     private final ObjectMapper objectMapper; // Jackson ObjectMapper 주입
-    @KafkaListener(topics = "chat-topic")
+    @KafkaListener(topics = "chat-topic", groupId = "chat-group")
     public void consumeMessage(String message) {
         try {
             log.info("Received raw message: {}", message);
