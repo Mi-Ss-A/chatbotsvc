@@ -6,13 +6,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.Map;
+
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "채팅 메시지 저장 요청")
-public class ChatSaveRequest {
+public class ChatSaveRequest implements Serializable {
 
     @Schema(
             description = "메시지 내용",
@@ -28,4 +31,10 @@ public class ChatSaveRequest {
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String sender;
+
+    @Schema(
+            description = "세션 ID",
+            example = "abc123"
+    )
+    private String sessionId;  // 세션 ID 필드 추가
 }
