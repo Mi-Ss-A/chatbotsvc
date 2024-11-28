@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(schema = "mydb2", name = "chat_messages")
+@Table(schema = "wibee", name = "chat_messages")
 @Getter
 @Builder
 @NoArgsConstructor
