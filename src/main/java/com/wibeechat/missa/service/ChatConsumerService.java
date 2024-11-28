@@ -39,6 +39,7 @@ public class ChatConsumerService {
             String sessionId = messageMap.get("sessionId");
             //해당 세션아이디로 레디스에서 userno조회 해오기
             String userNo = redisTemplate.opsForValue().get("session:user:" + sessionId);
+            userNo = userNo.replace("\"", "");
 
             chatService.saveMessage(userNo, request);
             log.info("Message processed successfully");
