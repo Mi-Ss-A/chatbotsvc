@@ -3,6 +3,7 @@ package com.wibeechat.missa.service;
 
 import java.util.Map;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ChatConsumerService {
     private final KafkaConsumerService chatService;
-    private final ObjectMapper objectMapper; // Jackson ObjectMapper 주입
+    private final ObjectMapper objectMapper;
+    private final RedisTemplate<String, String> redisTemplate;
     @KafkaListener(topics = "chat-topic", groupId = "chat-group")
     public void consumeMessage(String message) {
         try {
@@ -31,13 +33,13 @@ public class ChatConsumerService {
             ChatSaveRequest request = ChatSaveRequest.builder()
                     .content(messageMap.get("content"))
                     .sender(messageMap.get("sender"))
+                    .sessionId(messageMap.get("sessionId"))
                     .build();
 
-            // 시스템 기본값 사용
-            String userNo = "system";
-
-            log.info("Processing message - content: {}, sender: {}",
-                    request.getContent(), request.getSender());
+            String sessionId = messageMap.get("sessionId");
+            //해당 세션아이디로 레디스에서 userno조회 해오기
+            String userNo = redisTemplate.opsForValue().get("session:user:" + sessionId);
+            userNo = userNo.replace("\"", "");
 
             chatService.saveMessage(userNo, request);
             log.info("Message processed successfully");
